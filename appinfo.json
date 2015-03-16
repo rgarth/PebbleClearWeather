@@ -1,0 +1,92 @@
+{
+    "appKeys": {
+        "KEY_CONDITIONS": 3,
+        "KEY_JSREADY": 0,
+        "KEY_TEMPERATURE": 2,
+        "KEY_UNITS": 1
+    },
+    "capabilities": [
+        "location",
+        "configurable"
+    ],
+    "companyName": "rgarth@gmail.com",
+    "longName": "Clear Weather",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/wind.png",
+                "name": "IMG_WIND",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/tornado.png",
+                "name": "IMG_TORNADO",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/thunderstorm.png",
+                "name": "IMG_THUNDERSTORM",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/snow.png",
+                "name": "IMG_SNOW",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/sleet.png",
+                "name": "IMG_SLEET",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/rain.png",
+                "name": "IMG_RAIN",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/partly-cloudy-night.png",
+                "name": "IMG_PARTLY_CLOUDY_NIGHT",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/partly-cloudy-day.png",
+                "name": "IMG_PARTLY_CLOUDY_DAY",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/hail.png",
+                "name": "IMG_HAIL",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/fog.png",
+                "name": "IMG_FOG",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/cloudy.png",
+                "name": "IMG_CLOUDY",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/clear-night.png",
+                "name": "IMG_CLEAR_NIGHT",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/clear-day.png",
+                "name": "IMG_CLEAR_DAY",
+                "type": "png-trans"
+            }
+        ]
+    },
+    "sdkVersion": "2",
+    "shortName": "Clear Weather",
+    "uuid": "3368d3ce-8352-4234-ab12-51e57dd1e0bd",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
