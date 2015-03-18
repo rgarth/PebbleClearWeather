@@ -1,7 +1,11 @@
 {
     "appKeys": {
+        "KEY_CITY": 7,
         "KEY_CONDITIONS": 3,
+        "KEY_HIGH": 4,
+        "KEY_ICON": 6,
         "KEY_JSREADY": 0,
+        "KEY_LOW": 5,
         "KEY_TEMPERATURE": 2,
         "KEY_UNITS": 1
     },

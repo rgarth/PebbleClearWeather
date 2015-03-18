@@ -14,15 +14,8 @@ var xhrRequest = function (url, type, callback) {
 
 function locationSuccess(pos) {
   // Construct URL
-  
-  //migration to forecast.io
-  if (units == "metric") {
-    units = "si";
-  } else if (units =="imperial") {
-    units = "us";
-  }
-  
-  var url = "https://api.forecast.io/forecast//" + pos.coords.latitude + "," +
+    
+  var url = "https://api.forecast.io/forecast/8af757cd68c3cacf3de9ee497051c0a5/" + pos.coords.latitude + "," +
       pos.coords.longitude + "?units=" + units;
   console.log("URL is " + url);
 
@@ -56,39 +49,58 @@ function locationSuccess(pos) {
       low_temperature = Math.round(json.daily.data[0].temperatureMin);
       high_temperature = Math.round(json.daily.data[0].temperatureMax);
       console.log("High:" + high_temperature + ", Low:" + low_temperature);
+      var dictionary = {
+        "KEY_TEMPERATURE": temperature,
+        "KEY_CONDITIONS": conditions,
+        "KEY_HIGH": high_temperature,
+        "KEY_LOW": low_temperature,
+        "KEY_ICON": icon
+      };
+      
+      // Send to Pebble
+      Pebble.sendAppMessage(dictionary,
+      function(e) {
+        console.log("Weather info sent to Pebble successfully!");
+      },
+      function(e) {
+        console.log("Error sending weather info to Pebble!");
+      }
+      );    
     }
   );
   
-  url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" 
-    + pos.coords.latitude + "," + pos.coords.longitude;
+  url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
+    pos.coords.latitude + "," + pos.coords.longitude;
   console.log("URL is " + url);
   
   xhrRequest(url, 'GET', 
     function(responseText) {
       // responseText contains a JSON object with weather info
       var json = JSON.parse(responseText);
+      var address_components = json.results[0].address_components;
 
-      city = json.results[0].address_components[2].long_name;
-      console.log("City is " + city);      
+      for (var i=0; i < address_components.length; i++){
+        if (address_components[i].types[0] == "locality") {
+          city = address_components[i].long_name;
+          console.log("City is " + city);        
+          // Send to Pebble
+          var dictionary = {
+            "KEY_CITY": city
+          };
+          Pebble.sendAppMessage(dictionary,
+          function(e) {
+            console.log("Location data sent to Pebble successfully!");
+          },
+          function(e) {
+            console.log("Error sending location data to Pebble!");
+          }
+          );
+        }     
+      }
+
     }
   );
-  
-  // Assemble dictionary using our keys
-  var dictionary = {
-    "KEY_TEMPERATURE": temperature,
-    "KEY_CONDITIONS": conditions,
-    "KEY_CITY": city
-  };
-
-  // Send to Pebble
-  Pebble.sendAppMessage(dictionary,
-    function(e) {
-      console.log("Weather info sent to Pebble successfully!");
-    },
-    function(e) {
-      console.log("Error sending weather info to Pebble!");
-    }
-  );      
+         
 }
 
 function locationError(err) {
