@@ -18,10 +18,10 @@
 
         <fieldset data-role="unitgroup">
 	      <legend>Temperature Units:</legend>
-          <input type="radio" name="units" id="units-1" value="si" checked="checked" />
-          <label for="units-1">Celcius</label>
-          <input type="radio" name="units" id="units-2" value="us"  />
-          <label for="units-2">Fahrenheit</label>
+          <input type="radio" name="units" id="units-si" value="si"  />
+          <label for="units-si">Celcius</label>
+          <input type="radio" name="units" id="units-us" value="us"  />
+          <label for="units-us">Fahrenheit</label>
         </fieldset>
 
           <fieldset class="ui-grid-a">
@@ -32,6 +32,7 @@
        </div>
       </div>
     </div>
+
     <script>
 
       function saveOptions() {
@@ -39,6 +40,17 @@
         options["units"] = $('input:radio[name=units]:checked').val();
         return options;
       }
+
+      function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) {
+          var sParameterName = sURLVariables[i].split('=');
+          if (sParameterName[0] == sParam) {
+            return sParameterName[1];
+          }
+        }
+      }          
 
       $().ready(function() {
         $("#b-cancel").click(function() {
@@ -55,7 +67,16 @@
           document.location = location;
         });
 
+        if (getUrlParameter('units') == 'us') {
+          $('input#units-us').prop("checked", "true").checkboxradio("refresh");
+        } else {
+          $('input#units-si').prop("checked", "true").checkboxradio("refresh");
+        }
+
+
+
       });
+
     </script>
   </body>
 </html>
