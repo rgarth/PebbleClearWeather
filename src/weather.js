@@ -15,7 +15,7 @@ var xhrRequest = function (url, type, callback) {
 function locationSuccess(pos) {
   // Construct URL
     
-  var url = "https://api.forecast.io/forecast/8af757cd68c3cacf3de9ee497051c0a5/" + pos.coords.latitude + "," +
+  var url = "https://api.forecast.io/forecast//" + pos.coords.latitude + "," +
       pos.coords.longitude + "?units=" + units;
   console.log("URL is " + url);
 

@@ -19,6 +19,41 @@
     "resources": {
         "media": [
             {
+                "file": "fonts/OpenSans-CondBold.ttf",
+                "name": "OPEN_SANS_CONDENSED_BOLD_48",
+                "type": "font"
+            },
+            {
+                "file": "fonts/OpenSans-CondBold.ttf",
+                "name": "OPEN_SANS_CONDENSED_BOLD_30",
+                "type": "font"
+            },
+            {
+                "file": "fonts/OpenSans-CondBold.ttf",
+                "name": "OPEN_SANS_CONDENSED_BOLD_42",
+                "type": "font"
+            },
+            {
+                "file": "fonts/OpenSans-CondLight.ttf",
+                "name": "OPEN_SANS_CONDENSED_LIGHT_48",
+                "type": "font"
+            },
+            {
+                "file": "fonts/OpenSans-CondLight.ttf",
+                "name": "OPEN_SANS_CONDENSED_LIGHT_30",
+                "type": "font"
+            },
+            {
+                "file": "fonts/OpenSans-CondLight.ttf",
+                "name": "OPEN_SANS_CONDENSED_LIGHT_42",
+                "type": "font"
+            },
+            {
+                "file": "images/unknown.png",
+                "name": "IMG_UNKNOWN",
+                "type": "png-trans"
+            },
+            {
                 "file": "images/wind.png",
                 "name": "IMG_WIND",
                 "type": "png-trans"

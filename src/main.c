@@ -14,9 +14,14 @@
 
 
 static Window *s_main_window;
+static Window *s_forecast_window;
 static TextLayer *s_time_layer;
 static TextLayer *s_temperature_layer;
 static BitmapLayer *s_bitmap_layer;
+
+// Timer
+AppTimer *shake_timer;
+
 
 // variables
 char w_units[] = "us";
@@ -44,17 +49,18 @@ static int get_bitmap(char str[]) {
   else if (strcmp(str, "partly-cloudy-night") == 0)
     return RESOURCE_ID_IMG_PARTLY_CLOUDY_NIGHT_WHITE;
   else if (strcmp(str, "rain") == 0)
-    return RESOURCE_ID_IMG_RAIN_WHITE);
+    return RESOURCE_ID_IMG_RAIN_WHITE;
   else if (strcmp(str, "sleet") == 0)
-    return RESOURCE_ID_IMG_SLEET_WHITE);
+    return RESOURCE_ID_IMG_SLEET_WHITE;
   else if (strcmp(str, "snow") == 0)
-    return RESOURCE_ID_IMG_SNOW_WHITE);
+    return RESOURCE_ID_IMG_SNOW_WHITE;
   else if (strcmp(str, "thunderstorm") == 0)
-    return RESOURCE_ID_IMG_THUNDERSTORM_WHITE);
+    return RESOURCE_ID_IMG_THUNDERSTORM_WHITE;
   else if (strcmp(str, "tornado") == 0)
-    return RESOURCE_ID_IMG_TORNADO_WHITE);
+    return RESOURCE_ID_IMG_TORNADO_WHITE;
   else if (strcmp(str, "wind") == 0)
-    return RESOURCE_ID_IMG_WIND_WHITE);
+    return RESOURCE_ID_IMG_WIND_WHITE;
+  else return RESOURCE_ID_IMG_UNKNOWN_WHITE;
 }
 
 static void show_temperature() {
@@ -125,8 +131,18 @@ static void bt_handler(bool connected) {
   
 }
 
+static void shake_timer_callback(void *date) {
+  if (window_stack_contains_window(s_forecast_window)) {
+    window_stack_pop(1);
+  } else {
+    window_stack_push(s_forecast_window, 1);
+    shake_timer = app_timer_register(3000, (AppTimerCallback) shake_timer_callback, NULL);  
+  }
+}
+
 static void tap_handler(AccelAxisType axis, int32_t direction) {
-  
+  if (!w_current) update_weather();
+  shake_timer = app_timer_register(2000, (AppTimerCallback) shake_timer_callback, NULL);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -216,21 +232,22 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 
 static void main_window_load(Window *window) {
   // Create time TextLayer
-  s_time_layer = text_layer_create(GRect(0, 22, 144, 30));
+  s_time_layer = text_layer_create(GRect(0, 22, 144, 52));
   text_layer_set_background_color(s_time_layer, GColorBlack);
   text_layer_set_text_color(s_time_layer, GColorWhite);
   
-  s_temperature_layer = text_layer_create(GRect(72, 107, 72, 30));
+  s_temperature_layer = text_layer_create(GRect(74, 107, 70, 34));
   text_layer_set_background_color(s_temperature_layer, GColorBlack);
   text_layer_set_text_color(s_temperature_layer, GColorWhite);
   
-  GFont custom_font = fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK); 
+  GFont time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_CONDENSED_BOLD_48)); 
+  GFont weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_OPEN_SANS_CONDENSED_BOLD_30)); 
 
-  text_layer_set_font(s_time_layer, custom_font);
+  text_layer_set_font(s_time_layer, time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
 
-  text_layer_set_font(s_temperature_layer, custom_font);
-  text_layer_set_text_alignment(s_temperature_layer, GTextAlignmentCenter);
+  text_layer_set_font(s_temperature_layer, weather_font);
+  text_layer_set_text_alignment(s_temperature_layer, GTextAlignmentLeft);
 
   // Add it as a child layer to the Window's root layer
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_temperature_layer));
@@ -238,7 +255,8 @@ static void main_window_load(Window *window) {
   // Until we have the temperature
   text_layer_set_text(s_temperature_layer, "--\u00B0");
 
-  s_bitmap_layer = bitmap_layer_create(GRect(0, 84, 72, 84));
+  s_bitmap_layer = bitmap_layer_create(GRect(0, 84, 70, 84));
+  bitmap_layer_set_alignment(s_bitmap_layer, GAlignRight);
   bitmap_layer_set_background_color(s_bitmap_layer, GColorBlack); 
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_bitmap_layer));
 
@@ -248,9 +266,22 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_temperature_layer);
   bitmap_layer_destroy(s_bitmap_layer);
-} 
+}
+
+static void forecast_window_load(Window *window) {
+  
+}
+
+static void forecast_window_unload(Window *window) {
+  
+}
 
 static void init () {
+  // Load stored values
+  if (persist_exists(KEY_UNITS)) {
+    persist_read_string(KEY_UNITS, w_units, sizeof(w_units));
+    APP_LOG(APP_LOG_LEVEL_INFO, "Reading temperature units: %s", w_units);
+  }
   
   // Register callbacks
   app_message_register_inbox_received(inbox_received_callback);
@@ -269,6 +300,15 @@ static void init () {
   window_set_window_handlers(s_main_window, (WindowHandlers) {
     .load = main_window_load,
     .unload = main_window_unload
+  });
+  
+  // Create Forecast winmdow
+  s_forecast_window = window_create();
+  window_set_background_color(s_forecast_window, GColorWhite);
+  // Set handlers to manage the elements inside the Window
+  window_set_window_handlers(s_forecast_window, (WindowHandlers) {
+    .load = forecast_window_load,
+    .unload = forecast_window_unload
   });
 
   // Show the Window on the watch, with animated=true
@@ -293,6 +333,7 @@ static void init () {
 static void deinit () {
   // Destroy Window
   window_destroy(s_main_window);
+  window_destroy(s_forecast_window);
 }
 
 int main(void) {
