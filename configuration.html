@@ -22,7 +22,18 @@
           <label for="units-si">Celcius</label>
           <input type="radio" name="units" id="units-us" value="us"  />
           <label for="units-us">Fahrenheit</label>
-        </fieldset>
+        </fieldset> <br />
+        <div data-role="fieldcontain">
+        <label for="time-choice" class="select">Show tomorrow's forecast:</label>
+        <select name="time-choice" id="time-choice">
+          <option value="0">Always</option>
+          <option value="9">After 9am</option>
+          <option value="12">After 12pm</option>
+          <option value="15">After 3pm</option>
+          <option value="18">After 6pm</option>
+          <option value="24">Never</option>
+        </select>
+        </div>
 
           <fieldset class="ui-grid-a">
               <div class="ui-block-a"><button type="submit" data-theme="d" id="b-cancel">Cancel</button></div>
@@ -38,6 +49,7 @@
       function saveOptions() {
         var options = {}
         options["units"] = $('input:radio[name=units]:checked').val();
+        options["time"] = $('#time-choice option:selected').val();
         return options;
       }
 
@@ -72,7 +84,7 @@
         } else {
           $('input#units-si').prop("checked", "true").checkboxradio("refresh");
         }
-
+        $('select#time-choice').val(getUrlParameter('time')).prop("selected", "true").selectmenu("refresh");
 
 
       });
