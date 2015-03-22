@@ -1,12 +1,14 @@
 {
     "appKeys": {
-        "KEY_CITY": 7,
-        "KEY_CONDITIONS": 3,
-        "KEY_HIGH": 4,
-        "KEY_ICON": 6,
+        "KEY_CITY": 6,
+        "KEY_FORECAST_ICON": 8,
+        "KEY_HIGH": 3,
+        "KEY_ICON": 5,
         "KEY_JSREADY": 0,
-        "KEY_LOW": 5,
+        "KEY_LOW": 4,
         "KEY_TEMPERATURE": 2,
+        "KEY_TIMESWITCH": 7,
+        "KEY_TOMORROW": 9,
         "KEY_UNITS": 1
     },
     "capabilities": [
@@ -19,33 +21,23 @@
     "resources": {
         "media": [
             {
-                "file": "fonts/OpenSans-CondBold.ttf",
-                "name": "OPEN_SANS_CONDENSED_BOLD_48",
+                "file": "images/grey.png",
+                "name": "IMG_GREY",
+                "type": "png"
+            },
+            {
+                "file": "fonts/DidactGothic.ttf",
+                "name": "DIDACTIC_GOTHIC_18",
                 "type": "font"
             },
             {
-                "file": "fonts/OpenSans-CondBold.ttf",
-                "name": "OPEN_SANS_CONDENSED_BOLD_30",
+                "file": "fonts/DidactGothic.ttf",
+                "name": "DIDACTIC_GOTHIC_48",
                 "type": "font"
             },
             {
-                "file": "fonts/OpenSans-CondBold.ttf",
-                "name": "OPEN_SANS_CONDENSED_BOLD_42",
-                "type": "font"
-            },
-            {
-                "file": "fonts/OpenSans-CondLight.ttf",
-                "name": "OPEN_SANS_CONDENSED_LIGHT_48",
-                "type": "font"
-            },
-            {
-                "file": "fonts/OpenSans-CondLight.ttf",
-                "name": "OPEN_SANS_CONDENSED_LIGHT_30",
-                "type": "font"
-            },
-            {
-                "file": "fonts/OpenSans-CondLight.ttf",
-                "name": "OPEN_SANS_CONDENSED_LIGHT_42",
+                "file": "fonts/DidactGothic.ttf",
+                "name": "DIDACTIC_GOTHIC_36",
                 "type": "font"
             },
             {
@@ -56,11 +48,6 @@
             {
                 "file": "images/wind.png",
                 "name": "IMG_WIND",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/tornado.png",
-                "name": "IMG_TORNADO",
                 "type": "png-trans"
             },
             {

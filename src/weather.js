@@ -1,7 +1,8 @@
 
-// Location success can Inly take a single variable
+// Location success can only take a single variable
 // It was just simply to declare a global
 var units = "us";
+var tomorrow = 0;
 
 var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
@@ -15,14 +16,12 @@ var xhrRequest = function (url, type, callback) {
 function locationSuccess(pos) {
   // Construct URL
     
-  var url = "https://api.forecast.io/forecast//" + pos.coords.latitude + "," +
+  var url = "https://api.forecast.io/forecast/<forecast.io api key>/" + pos.coords.latitude + "," +
       pos.coords.longitude + "?units=" + units;
-  console.log("URL is " + url);
-
   
-  var conditions;
   var temperature;
   var icon;
+  var forecast_icon;
   var low_temperature;
   var high_temperature;
   var city;
@@ -35,26 +34,22 @@ function locationSuccess(pos) {
 
       // Current temperature 
       temperature = Math.round(json.currently.temperature);
-      console.log("Temperature is " + temperature);
-
-      // Conditions
-      conditions = json.currently.summary;      
-      console.log("Conditions are " + conditions);
       
       // weather icon
       icon = json.currently.icon;
-      console.log("Weather icon, " + icon);
+      
+      forecast_icon = json.daily.data[tomorrow].icon;
       
       // low and high temperatures
-      low_temperature = Math.round(json.daily.data[0].temperatureMin);
-      high_temperature = Math.round(json.daily.data[0].temperatureMax);
-      console.log("High:" + high_temperature + ", Low:" + low_temperature);
+      low_temperature = Math.round(json.daily.data[tomorrow].temperatureMin);
+      high_temperature = Math.round(json.daily.data[tomorrow].temperatureMax);
       var dictionary = {
         "KEY_TEMPERATURE": temperature,
-        "KEY_CONDITIONS": conditions,
         "KEY_HIGH": high_temperature,
         "KEY_LOW": low_temperature,
-        "KEY_ICON": icon
+        "KEY_ICON": icon,
+        "KEY_FORECAST_ICON": forecast_icon,
+        "KEY_TOMORROW": tomorrow
       };
       
       // Send to Pebble
@@ -71,7 +66,6 @@ function locationSuccess(pos) {
   
   url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
     pos.coords.latitude + "," + pos.coords.longitude;
-  console.log("URL is " + url);
   
   xhrRequest(url, 'GET', 
     function(responseText) {
@@ -82,19 +76,21 @@ function locationSuccess(pos) {
       for (var i=0; i < address_components.length; i++){
         if (address_components[i].types[0] == "locality") {
           city = address_components[i].long_name;
-          console.log("City is " + city);        
           // Send to Pebble
           var dictionary = {
             "KEY_CITY": city
           };
+        
+          // Send to Pebble, so we can load units variable and send it back
           Pebble.sendAppMessage(dictionary,
-          function(e) {
-            console.log("Location data sent to Pebble successfully!");
-          },
-          function(e) {
-            console.log("Error sending location data to Pebble!");
-          }
-          );
+            function(e) {
+              console.log("Ready notice sent to phone!");
+            },
+            function(e) {
+              console.log("Error ready notice to Pebble!");
+            }
+          ); 
+
         }     
       }
 
@@ -131,11 +127,7 @@ Pebble.addEventListener('ready',
       function(e) {
         console.log("Error ready notice to Pebble!");
       }
-    );
- 
-
-    // Get the initial weather
-    //getWeather();
+    ); 
   }
 );
 
@@ -144,9 +136,19 @@ Pebble.addEventListener('appmessage',
   function(e) {
     console.log("AppMessage received");
     units = e.payload.KEY_UNITS;
-    if (typeof units == 'undefined') {
-      units = "us";
+    if (typeof units == 'undefined') units = "us";
+
+    var timeSwitch = e.payload.KEY_TIMESWITCH;
+    if (typeof timeSwitch == 'undefined') timeSwitch = 12;
+    var d = new Date();   
+    if (d.getHours() >= timeSwitch) {
+      tomorrow = 1;
+      console.log ("Tomorrow's Forecast!");
+    } else {
+      tomorrow = 0;
+      console.log ("Today's Forecast!");
     }
+    
     getWeather();
   }                     
 );
