@@ -42,6 +42,7 @@ char w_city[32];
 bool tomorrow = 0;
 GBitmap *w_bitmap, *f_bitmap, *bg_bitmap;
 bool forecast_face = 0;
+GFont weather_font, time_font, hilow_font;
 
 // return the correct resource depending on icon name
 static int get_bitmap(char str[]) {
@@ -134,15 +135,17 @@ static void bt_handler(bool connected) {
 
 static void shake_timer_callback(void *date) {
   if (window_stack_contains_window(s_forecast_window)) {
+    gbitmap_destroy(f_bitmap);
     window_stack_pop(1);
     forecast_face = 0;
     show_time();
   } else {
     window_stack_push(s_forecast_window, 1);
     // bitmap
-    gbitmap_destroy(f_bitmap);
     f_bitmap = gbitmap_create_with_resource(get_bitmap(f_icon));
-    bitmap_layer_set_bitmap(s_forecast_bitmap_layer, scaleBitmap(f_bitmap, 65, 65));
+    f_bitmap = scaleBitmap(f_bitmap, 60, 60);
+    //bitmap_layer_set_bitmap(s_forecast_bitmap_layer, scaleBitmap(f_bitmap, 65, 65));
+    bitmap_layer_set_bitmap(s_forecast_bitmap_layer, f_bitmap);
     // header
     static char header[64];
     if (tomorrow) {
@@ -182,7 +185,7 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
   if (! forecast_face) {
     if (w_high) { 
       forecast_face = 1;
-       shake_timer = app_timer_register(2000, (AppTimerCallback) shake_timer_callback, NULL);     
+      shake_timer = app_timer_register(2000, (AppTimerCallback) shake_timer_callback, NULL);     
     }       
   }
 }
@@ -292,6 +295,7 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 
 
 static void main_window_load(Window *window) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Loaded main windows");
   // Create time TextLayer
   s_time_layer = text_layer_create(GRect(0, 18, 144, 50));
   text_layer_set_background_color(s_time_layer, GColorBlack);
@@ -302,8 +306,8 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_temperature_layer, GColorWhite);
   text_layer_set_overflow_mode(s_temperature_layer, GTextOverflowModeWordWrap);
   
-  GFont time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_48)); 
-  GFont weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36)); 
+  time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_48)); 
+  weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36)); 
 
   text_layer_set_font(s_time_layer, time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
@@ -325,12 +329,17 @@ static void main_window_load(Window *window) {
 }
 
 static void main_window_unload(Window *window) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "unloaded windows");
+  gbitmap_destroy(w_bitmap);
+  fonts_unload_custom_font(time_font);
+  fonts_unload_custom_font(weather_font);
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_temperature_layer);
   bitmap_layer_destroy(s_bitmap_layer);
 }
 
 static void forecast_window_load(Window *window) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Loaded forecast windows");
   // Header
   s_forecast_header_layer = text_layer_create(GRect(48, 0, 100, 84));
   text_layer_set_background_color(s_forecast_header_layer, GColorBlack);
@@ -359,7 +368,7 @@ static void forecast_window_load(Window *window) {
   layer_add_child(window_get_root_layer(s_forecast_window), bitmap_layer_get_layer(s_forecast_bg_layer));
   
   // high and low
-  GFont hilow_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36));
+  hilow_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36));
   s_forecast_high_layer = text_layer_create(GRect(0, 102, 72, 40));
   text_layer_set_background_color(s_forecast_high_layer, GColorClear);
   text_layer_set_text_color(s_forecast_high_layer, GColorBlack);
@@ -379,6 +388,9 @@ static void forecast_window_load(Window *window) {
 }
 
 static void forecast_window_unload(Window *window) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Unloaded forecast windows");
+  gbitmap_destroy(bg_bitmap);
+  fonts_unload_custom_font(hilow_font);
   text_layer_destroy(s_forecast_header_layer);
   bitmap_layer_destroy(s_forecast_bitmap_layer);
   inverter_layer_destroy(s_forecast_layer);
