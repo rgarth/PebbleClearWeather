@@ -18,12 +18,12 @@ static void scaleRow(uint8_t *target, uint8_t *source, int srcWidth, int tgtWidt
   while (tgtPixels < tgtWidth) {
     *target  |= ((*source >> srcIndex) & 1) << (tgtPixels % 8);
     srcIndex += intPart;
-    
+
     E += fractPart;
     if (E >= tgtWidth) {
       E -= tgtWidth;
       srcIndex++;
-    } 
+    }
 
     if(srcIndex >= 8){
       source += srcIndex / 8;
@@ -34,7 +34,7 @@ static void scaleRow(uint8_t *target, uint8_t *source, int srcWidth, int tgtWidt
     if(tgtPixels % 8 == 0){
      target++;
     }
-  } 
+  }
 }
 
 GBitmap* scaleBitmap(GBitmap* src, uint8_t ratio_width_percent, uint8_t ratio_height_percent){
@@ -46,7 +46,7 @@ GBitmap* scaleBitmap(GBitmap* src, uint8_t ratio_width_percent, uint8_t ratio_he
     int srcWidth = src->bounds.size.w;
     int tgtHeight = srcHeight * ratio_height_percent / 100;
     int tgtWidth = srcWidth * ratio_width_percent / 100;
-    
+
     tgt = gbitmap_create_blank((GSize){tgtWidth, tgtHeight});
 
     if(tgt == NULL)
@@ -78,8 +78,8 @@ GBitmap* scaleBitmap(GBitmap* src, uint8_t ratio_width_percent, uint8_t ratio_he
         if (E >= tgtHeight) {
           E -= tgtHeight;
           source += src->row_size_bytes;;
-        } 
-      } 
+        }
+      }
     }
   }
 
@@ -181,4 +181,4 @@ void computeMorphingBitmap(GBitmap* source, GBitmap* dest, GBitmap* result, uint
       }
     }
   }
-} 
+}

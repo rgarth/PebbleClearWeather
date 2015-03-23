@@ -1,13 +1,13 @@
 {
     "appKeys": {
-        "KEY_CITY": 6,
-        "KEY_FORECAST_ICON": 8,
-        "KEY_HIGH": 3,
-        "KEY_ICON": 5,
+        "KEY_CITY": 8,
+        "KEY_FORECAST_ICON": 7,
+        "KEY_HIGH": 5,
+        "KEY_ICON": 4,
         "KEY_JSREADY": 0,
-        "KEY_LOW": 4,
-        "KEY_TEMPERATURE": 2,
-        "KEY_TIMESWITCH": 7,
+        "KEY_LOW": 6,
+        "KEY_TEMPERATURE": 3,
+        "KEY_TIMESWITCH": 2,
         "KEY_TOMORROW": 9,
         "KEY_UNITS": 1
     },
@@ -22,77 +22,18 @@
         "media": [
             {
                 "file": "images/grey.png",
-                "name": "IMG_GREY",
+                "name": "IMG_GREY_BG",
                 "type": "png"
             },
             {
-                "file": "fonts/DidactGothic.ttf",
-                "name": "DIDACTIC_GOTHIC_18",
-                "type": "font"
+                "file": "images/weather-menu.png",
+                "menuIcon": true,
+                "name": "IMG_MENU_ICON",
+                "type": "png"
             },
             {
-                "file": "fonts/DidactGothic.ttf",
-                "name": "DIDACTIC_GOTHIC_48",
-                "type": "font"
-            },
-            {
-                "file": "fonts/DidactGothic.ttf",
-                "name": "DIDACTIC_GOTHIC_36",
-                "type": "font"
-            },
-            {
-                "file": "images/unknown.png",
-                "name": "IMG_UNKNOWN",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/wind.png",
-                "name": "IMG_WIND",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/thunderstorm.png",
-                "name": "IMG_THUNDERSTORM",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/snow.png",
-                "name": "IMG_SNOW",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/sleet.png",
-                "name": "IMG_SLEET",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/rain.png",
-                "name": "IMG_RAIN",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/partly-cloudy-night.png",
-                "name": "IMG_PARTLY_CLOUDY_NIGHT",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/partly-cloudy-day.png",
-                "name": "IMG_PARTLY_CLOUDY_DAY",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/hail.png",
-                "name": "IMG_HAIL",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/fog.png",
-                "name": "IMG_FOG",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/cloudy.png",
-                "name": "IMG_CLOUDY",
+                "file": "images/clear-day.png",
+                "name": "IMG_CLEAR_DAY",
                 "type": "png-trans"
             },
             {
@@ -101,9 +42,69 @@
                 "type": "png-trans"
             },
             {
-                "file": "images/clear-day.png",
-                "name": "IMG_CLEAR_DAY",
+                "file": "images/cloudy.png",
+                "name": "IMG_CLOUDY",
                 "type": "png-trans"
+            },
+            {
+                "file": "images/fog.png",
+                "name": "IMG_FOG",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/hail.png",
+                "name": "IMG_HAIL",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/partly-cloudy-day.png",
+                "name": "IMG_PARTLY_CLOUDY_DAY",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/partly-cloudy-night.png",
+                "name": "IMG_PARTLY_CLOUDY_NIGHT",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/rain.png",
+                "name": "IMG_RAIN",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/sleet.png",
+                "name": "IMG_SLEET",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/snow.png",
+                "name": "IMG_SNOW",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/thunderstorm.png",
+                "name": "IMG_THUNDERSTORM",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/wind.png",
+                "name": "IMG_WIND",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/unknown.png",
+                "name": "IMG_UNKNOWN",
+                "type": "png-trans"
+            },
+            {
+                "file": "fonts/DidactGothic.ttf",
+                "name": "DIDACTIC_GOTHIC_36",
+                "type": "font"
+            },
+            {
+                "file": "fonts/DidactGothic.ttf",
+                "name": "DIDACTIC_GOTHIC_48",
+                "type": "font"
             }
         ]
     },
@@ -111,7 +112,7 @@
     "shortName": "Clear Weather",
     "uuid": "3368d3ce-8352-4234-ab12-51e57dd1e0bd",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": true
     }

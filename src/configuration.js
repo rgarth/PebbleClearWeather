@@ -4,7 +4,8 @@ Pebble.addEventListener('showConfiguration', function(e) {
   if (typeof units == 'undefined') units = "us";
   var timeChoice = localStorage.getItem('time');
   if (typeof timeChoice == 'undefined') timeChoice = "12";
-  var URL = 'http://rgarth.github.io/PebbleClearWeather/configuration.html?units=' + units + '&time=' + timeChoice;
+  var URL = 'http://rgarth.github.io/PebbleClearWeather/configuration.html?units=' + 
+      units + '&time=' + timeChoice;
   console.log('Configuration window opened. ' + URL);
   Pebble.openURL(URL);
 });
@@ -13,10 +14,9 @@ Pebble.addEventListener('webviewclosed',
   function(e) {
     var configuration = JSON.parse(decodeURIComponent(e.response));
     var dictionary = {
-        "KEY_TIMESWITCH": parseInt(configuration.time),
-        "KEY_UNITS": configuration.units
+      "KEY_UNITS": configuration.units,
+      "KEY_TIMESWITCH": parseInt(configuration.time)
     };
-    console.log('Configuration window returned: ' + configuration.units + ", " + configuration.time);
     localStorage.setItem('units', configuration.units);
     localStorage.setItem('time', configuration.time);
     // Send to Pebble

@@ -16,5 +16,5 @@ GBitmap* scaleBitmap(GBitmap* src, uint8_t ratio_width_percent, uint8_t ratio_he
 //! @param source The source bitmap to be resized
 //! @param dest The final bitmap
 //! @param result The intermediate bitmap to compute
-//! @param remainingSteps The number of steps remaining until the result equals dest 
+//! @param remainingSteps The number of steps remaining until the result equals dest
 void computeMorphingBitmap(GBitmap* source, GBitmap* dest, GBitmap* result, uint8_t remainingSteps) ;
