@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "gbitmap_tools.h"
+#include "get_bitmap_resource.h"
 
 #define KEY_JSREADY       0
 #define KEY_UNITS         1
@@ -11,6 +12,7 @@
 #define KEY_FORECAST_ICON 7
 #define KEY_CITY          8
 #define KEY_TOMORROW      9
+#define KEY_LAST         10
   
 #define MyTupletCString(_key, _cstring) \
 ((const Tuplet) { .type = TUPLE_CSTRING, .key = _key, .cstring = { .data = _cstring, .length = strlen(_cstring) + 1 }})
@@ -30,41 +32,15 @@ static InverterLayer *s_forecast_invert_layer;
 char w_units[] = "us";
 int w_current, f_high, f_low;
 int time_switch = 12;
-char w_icon[32], f_icon[32], f_city[32], w_header[64];
+char f_city[32], w_header[64];
+int w_icon, f_icon;
 GBitmap *w_bitmap, *sc_bitmap, *f_bitmap, *bg_bitmap;
 GFont weather_font, time_font, header_font, hilo_font;
 bool forecast_face = 0;
 bool tomorrow = 0;
 AppTimer *shake_timer;
+int last_update;
 
-// return the correct resource depending on icon name
-static int get_bitmap(char str[]) {
-  if (strcmp(str, "clear-day") == 0)
-    return RESOURCE_ID_IMG_CLEAR_DAY_WHITE;    
-  else if (strcmp(str, "clear-night") == 0) 
-    return RESOURCE_ID_IMG_CLEAR_NIGHT_WHITE;
-  else if (strcmp(str, "cloudy") == 0)
-    return RESOURCE_ID_IMG_CLOUDY_WHITE;
-  else if (strcmp(str, "fog") == 0)
-    return RESOURCE_ID_IMG_FOG_WHITE;
-  else if (strcmp(str, "hail") == 0)
-    return RESOURCE_ID_IMG_HAIL_WHITE;
-  else if (strcmp(str, "partly-cloudy-day") == 0)
-    return RESOURCE_ID_IMG_PARTLY_CLOUDY_DAY_WHITE;
-  else if (strcmp(str, "partly-cloudy-night") == 0)
-    return RESOURCE_ID_IMG_PARTLY_CLOUDY_NIGHT_WHITE;
-  else if (strcmp(str, "rain") == 0)
-    return RESOURCE_ID_IMG_RAIN_WHITE;
-  else if (strcmp(str, "sleet") == 0)
-    return RESOURCE_ID_IMG_SLEET_WHITE;
-  else if (strcmp(str, "snow") == 0)
-    return RESOURCE_ID_IMG_SNOW_WHITE;
-  else if (strcmp(str, "thunderstorm") == 0)
-    return RESOURCE_ID_IMG_THUNDERSTORM_WHITE;
-  else if (strcmp(str, "wind") == 0)
-    return RESOURCE_ID_IMG_WIND_WHITE;
-  else return RESOURCE_ID_IMG_UNKNOWN_WHITE;
-}
 
 static void show_temperature() {
   if (w_current) {
@@ -75,7 +51,7 @@ static void show_temperature() {
 }
 
 static void show_icon() {
-  if (w_icon[0] != '\0') {
+  if (w_icon) {
     gbitmap_destroy(w_bitmap);
     w_bitmap = gbitmap_create_with_resource(get_bitmap(w_icon));
     bitmap_layer_set_bitmap(s_bitmap_layer, w_bitmap);
@@ -145,14 +121,18 @@ static void shake_timer_callback(void *date) {
 }
 
 static void tap_handler(AccelAxisType axis, int32_t direction) {
-  if (! w_current) update_weather();
-  
+  // If weather is stale update weather
+  if ((time(NULL) - 3600) > last_update) update_weather();
+
   // Don't start a second timer if we are already running one
   if (! forecast_face) {
     if (f_high) { 
       forecast_face = 1;
       shake_timer = app_timer_register(2000, (AppTimerCallback) shake_timer_callback, NULL);    
-    }    
+    } else {
+      // temp may be from persistent storage
+      update_weather();
+    }   
   }
 
 }
@@ -197,11 +177,15 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       need_weather = 1;
       break;
     case KEY_TEMPERATURE:
-      w_current = t->value->int32;        
+      w_current = t->value->int32;
+      last_update = time(NULL);
+      persist_write_int(KEY_TEMPERATURE, w_current);
+      persist_write_int(KEY_LAST, last_update);
       show_temperature();
       break;
     case KEY_ICON:
-      snprintf(w_icon, sizeof(w_icon), "%s", t->value->cstring);
+      w_icon = t->value->int32;
+      persist_write_int(KEY_ICON, w_icon);
       show_icon();
       break;
     case KEY_HIGH:
@@ -211,7 +195,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       f_low = t->value->int32;
       break;
     case KEY_FORECAST_ICON:
-      snprintf(f_icon, sizeof(f_icon), "%s", t->value->cstring);
+      f_icon = t->value->int32;
       break;
     case KEY_TOMORROW:
       tomorrow = t->value->int16;
@@ -303,7 +287,7 @@ static void forecast_window_load(Window *window) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Loaded forecast window");
   
   // icon
-  s_forecast_bitmap_layer = bitmap_layer_create(GRect(0, 0, 44, 100));
+  s_forecast_bitmap_layer = bitmap_layer_create(GRect(0, 0, 44, 84));
   bitmap_layer_set_alignment(s_forecast_bitmap_layer, GAlignCenter);
   bitmap_layer_set_background_color(s_forecast_bitmap_layer, GColorBlack);
   f_bitmap = gbitmap_create_with_resource(get_bitmap(f_icon));
@@ -396,6 +380,20 @@ static void init () {
   if (persist_exists(KEY_TIMESWITCH)) {
     time_switch = persist_read_int(KEY_TIMESWITCH);
     APP_LOG(APP_LOG_LEVEL_INFO, "Reading time switch value: %i", time_switch);
+  }
+  if (persist_exists(KEY_LAST)) {
+    last_update = persist_read_int(KEY_LAST);
+    // Use the last found weather is less the 90 minutes old
+    if ((time(NULL) - 5400) < last_update) {
+      if (persist_exists(KEY_TEMPERATURE)) {
+        w_current = persist_read_int(KEY_TEMPERATURE);
+        APP_LOG(APP_LOG_LEVEL_INFO, "Reading last good temperature: %i", w_current);
+      }
+      if (persist_exists(KEY_ICON)) {
+        w_icon = persist_read_int(KEY_ICON);
+        APP_LOG(APP_LOG_LEVEL_INFO, "Reading last good icon: %i", w_icon);
+      }
+    }   
   }
 
   // Create main Window element and assign to pointer
