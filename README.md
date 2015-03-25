@@ -7,6 +7,6 @@ To keep things readable at a glance, only the max and min temperature are shown,
 
 Bitmap scale library from here: https://github.com/gregoiresage/pebble-gbitmap-lib
 
-Weather is provided by forecast.io  
+Weather is provided by Yahoo  
 Icons: http://www.alessioatzeni.com/meteocons/  
 Font: http://openfontlibrary.org/font/didact-gothic  
