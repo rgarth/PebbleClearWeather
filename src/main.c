@@ -33,7 +33,7 @@ char w_units[] = "us";
 int w_current, f_high, f_low;
 int time_switch = 12;
 char f_city[32], w_header[64];
-int w_icon, f_icon;
+int w_icon = -1, f_icon;
 GBitmap *w_bitmap, *sc_bitmap, *f_bitmap, *bg_bitmap;
 GFont weather_font, time_font, header_font, hilo_font;
 bool forecast_face = 0;
@@ -51,7 +51,7 @@ static void show_temperature() {
 }
 
 static void show_icon() {
-  if (w_icon) {
+  if (w_icon >= 0) {
     gbitmap_destroy(w_bitmap);
     w_bitmap = gbitmap_create_with_resource(get_bitmap(w_icon));
     bitmap_layer_set_bitmap(s_bitmap_layer, w_bitmap);
