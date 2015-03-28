@@ -40,7 +40,7 @@ function getWeather(woeid) {
   var high;
   var low;
 
-  if (units == "us") {
+  if (units == "us" || units == "f") {
     units = "f";
   } else {
     units = "c";
