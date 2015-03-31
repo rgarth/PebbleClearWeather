@@ -72,7 +72,7 @@
 
         $("#b-submit").click(function() {
           console.log("Submit");
-          var return_to = getQueryParam('return_to', 'pebblejs://close#');
+          var return_to = getUrlParameter('return_to', 'pebblejs://close#');
           var location = return_to + encodeURIComponent(JSON.stringify(saveOptions()));
           console.log("Warping to: " + location);
           console.log(location);
