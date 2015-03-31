@@ -68,7 +68,8 @@
       $().ready(function() {
         $("#b-cancel").click(function() {
           console.log("Cancel");
-          document.location = "pebblejs://close";
+          var return_to = getUrlParameter('return_to', 'pebblejs://close');
+          document.location = return_to;
         });
 
         $("#b-submit").click(function() {
