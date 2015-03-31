@@ -73,10 +73,7 @@
         $("#b-submit").click(function() {
           console.log("Submit");
           var return_to = getUrlParameter('return_to', 'pebblejs://close#');
-          var location = return_to + encodeURIComponent(JSON.stringify(saveOptions()));
-          console.log("Warping to: " + location);
-          console.log(location);
-          //document.location = location;
+          document.location = return_to + encodeURIComponent(JSON.stringify(saveOptions()));
         });
 
         if (getUrlParameter('units') == 'us') {
