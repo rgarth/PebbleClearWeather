@@ -1,5 +1,4 @@
 #include <pebble.h>
-#include "gbitmap_tools.h"
 #include "get_bitmap_resource.h"
 
 #define KEY_JSREADY       0
@@ -13,6 +12,7 @@
 #define KEY_CITY          8
 #define KEY_TOMORROW      9
 #define KEY_LAST         10
+#define KEY_DAYLIGHT     11
   
 #define MyTupletCString(_key, _cstring) \
 ((const Tuplet) { .type = TUPLE_CSTRING, .key = _key, .cstring = { .data = _cstring, .length = strlen(_cstring) + 1 }})
@@ -21,25 +21,27 @@
 static Window *s_main_window;
 static TextLayer *s_time_layer, *s_temperature_layer;
 static BitmapLayer *s_bitmap_layer;
+static Layer *w_bg_layer;
 
 // Forecast Window
 static Window *s_forecast_window;
 static TextLayer *s_forecast_header_layer, *s_forecast_high_layer, *s_forecast_low_layer;
-static BitmapLayer *s_forecast_bitmap_layer, *s_forecast_bg_layer;
+static BitmapLayer *s_forecast_bitmap_layer;
 static InverterLayer *s_forecast_invert_layer;
-
+static Layer *s_forecast_bg_layer;
 // variables
 char w_units[] = "us";
 int w_current, f_high, f_low;
 int time_switch = 12;
 char f_city[32], w_header[64];
-int w_icon = -1, f_icon;
-GBitmap *w_bitmap, *sc_bitmap, *f_bitmap, *bg_bitmap;
+int w_icon = -1, f_icon = -1;
+GBitmap *w_bitmap, *f_bitmap;
 GFont weather_font, time_font, header_font, hilo_font;
 bool forecast_face = 0;
 bool tomorrow = 0;
 AppTimer *shake_timer;
 int last_update;
+bool daylight = 1;
 
 
 static void show_temperature() {
@@ -50,12 +52,33 @@ static void show_temperature() {
   }
 }
 
+static void w_update_bg_color(Layer *layer, GContext *ctx) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Updating background");
+  GRect bounds = layer_get_bounds(layer);
+
+  // Draw a black filled rectangle with sharp corners
+  #ifdef PBL_COLOR
+  if (daylight) {
+    graphics_context_set_fill_color(ctx, GColorPictonBlue);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+  } else {
+    graphics_context_set_fill_color(ctx, GColorLiberty);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);    
+  }
+  #else
+    graphics_context_set_fill_color(ctx, GColorBlack);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+  #endif
+}
+ 
 static void show_icon() {
   if (w_icon >= 0) {
     gbitmap_destroy(w_bitmap);
     w_bitmap = gbitmap_create_with_resource(get_bitmap(w_icon));
     bitmap_layer_set_bitmap(s_bitmap_layer, w_bitmap);
   }
+  layer_mark_dirty(w_bg_layer);
+  APP_LOG(APP_LOG_LEVEL_INFO, "Marking background dirty");
 }
 
 static void show_time() {
@@ -200,6 +223,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     case KEY_TOMORROW:
       tomorrow = t->value->int16;
       break;
+    case KEY_DAYLIGHT:
+      daylight = t->value->int16;
+      show_icon();
+      break;
     case KEY_CITY:
       snprintf(f_city, sizeof(f_city), "%s", t->value->cstring);
       break;
@@ -213,7 +240,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
       break;
     }   
-
+    
     // Look for next item
     t = dict_read_next(iterator);
   }
@@ -237,22 +264,26 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 
 static void main_window_load(Window *window) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Loaded main windows");
+ 
+  // Colored bitmap for weather bg
+  w_bg_layer = layer_create(GRect(0, 84, 144, 84));
+  layer_set_update_proc(w_bg_layer, w_update_bg_color); 
+  layer_add_child(window_get_root_layer(window), w_bg_layer);
+  
   // Create time TextLayer
-  s_time_layer = text_layer_create(GRect(0, 18, 144, 50));
+  s_time_layer = text_layer_create(GRect(0, 12, 144, 50));
   text_layer_set_background_color(s_time_layer, GColorBlack);
   text_layer_set_text_color(s_time_layer, GColorWhite);
-  // temperature layer
-  s_temperature_layer = text_layer_create(GRect(72, 104, 72, 40));
-  text_layer_set_background_color(s_temperature_layer, GColorBlack);
-  text_layer_set_text_color(s_temperature_layer, GColorWhite);
-  text_layer_set_overflow_mode(s_temperature_layer, GTextOverflowModeWordWrap);
-  
   time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_48)); 
-  weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36)); 
-
   text_layer_set_font(s_time_layer, time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
-
+       
+  // temperature layer
+  s_temperature_layer = text_layer_create(GRect(72, 104, 72, 40));
+  text_layer_set_background_color(s_temperature_layer, GColorClear);
+  text_layer_set_text_color(s_temperature_layer, GColorWhite); 
+  text_layer_set_overflow_mode(s_temperature_layer, GTextOverflowModeWordWrap);
+  weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36)); 
   text_layer_set_font(s_temperature_layer, weather_font);
   text_layer_set_text_alignment(s_temperature_layer, GTextAlignmentCenter);
 
@@ -266,10 +297,19 @@ static void main_window_load(Window *window) {
   // Icon layer
   s_bitmap_layer = bitmap_layer_create(GRect(0, 84, 72, 84));
   bitmap_layer_set_alignment(s_bitmap_layer, GAlignCenter);
-  bitmap_layer_set_background_color(s_bitmap_layer, GColorBlack); 
-  w_bitmap = gbitmap_create_blank(GSize(72,72));
+  bitmap_layer_set_background_color(s_bitmap_layer, GColorClear);
+  //bitmap_layer_set_compositing_mode(s_bitmap_layer, GCompOpSet);
+
+  #ifdef PBL_COLOR
+  w_bitmap = gbitmap_create_blank(GSize(72, 72), GBitmapFormat8Bit);
+  #else
+  w_bitmap = gbitmap_create_blank(GSize(72, 72));
+  #endif
+
   bitmap_layer_set_bitmap(s_bitmap_layer, w_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_bitmap_layer));
+    
+
 } 
 
 static void main_window_unload(Window *window) {
@@ -277,9 +317,11 @@ static void main_window_unload(Window *window) {
   fonts_unload_custom_font(time_font);
   fonts_unload_custom_font(weather_font);
   text_layer_destroy(s_time_layer);
+    
   text_layer_destroy(s_temperature_layer);
   gbitmap_destroy(w_bitmap);
   bitmap_layer_destroy(s_bitmap_layer);
+  layer_destroy(w_bg_layer);
 }
 
 static void forecast_window_load(Window *window) {
@@ -290,9 +332,8 @@ static void forecast_window_load(Window *window) {
   s_forecast_bitmap_layer = bitmap_layer_create(GRect(0, 0, 44, 84));
   bitmap_layer_set_alignment(s_forecast_bitmap_layer, GAlignCenter);
   bitmap_layer_set_background_color(s_forecast_bitmap_layer, GColorBlack);
-  f_bitmap = gbitmap_create_with_resource(get_bitmap(f_icon));
-  sc_bitmap = scaleBitmap(f_bitmap, 58, 58);
-  bitmap_layer_set_bitmap(s_forecast_bitmap_layer, sc_bitmap);
+  f_bitmap = gbitmap_create_with_resource(get_sm_bitmap(f_icon));
+  bitmap_layer_set_bitmap(s_forecast_bitmap_layer, f_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_bitmap_layer));
   
   // header
@@ -325,10 +366,9 @@ static void forecast_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(s_forecast_invert_layer));
 
   // grey background
-  s_forecast_bg_layer = bitmap_layer_create(GRect(72, 84, 72, 84));
-  bg_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_GREY_BG);
-  bitmap_layer_set_bitmap(s_forecast_bg_layer, bg_bitmap);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_bg_layer));
+  s_forecast_bg_layer = layer_create(GRect(72, 84, 144, 84));
+  layer_set_update_proc(s_forecast_bg_layer, w_update_bg_color); 
+  layer_add_child(window_get_root_layer(window), s_forecast_bg_layer);
 
   // high and low
   hilo_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36));
@@ -346,7 +386,7 @@ static void forecast_window_load(Window *window) {
 
   s_forecast_low_layer = text_layer_create(GRect(72, 102, 72, 40));
   text_layer_set_background_color(s_forecast_low_layer, GColorClear);
-  text_layer_set_text_color(s_forecast_low_layer, GColorBlack);
+  text_layer_set_text_color(s_forecast_low_layer, GColorWhite);
   text_layer_set_overflow_mode(s_forecast_low_layer, GTextOverflowModeWordWrap);
   text_layer_set_font(s_forecast_low_layer, hilo_font);
   text_layer_set_text_alignment(s_forecast_low_layer, GTextAlignmentCenter);
@@ -360,12 +400,10 @@ static void forecast_window_load(Window *window) {
 static void forecast_window_unload(Window *window) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Unoaded forecast window");
   gbitmap_destroy(f_bitmap);
-  gbitmap_destroy(sc_bitmap);
   bitmap_layer_destroy(s_forecast_bitmap_layer);
   text_layer_destroy(s_forecast_header_layer);
   inverter_layer_destroy(s_forecast_invert_layer);
-  gbitmap_destroy(bg_bitmap);
-  bitmap_layer_destroy(s_forecast_bg_layer);
+  layer_destroy(s_forecast_bg_layer);
   fonts_unload_custom_font(hilo_font);
   text_layer_destroy(s_forecast_high_layer);
   text_layer_destroy(s_forecast_low_layer);
@@ -438,6 +476,7 @@ static void init () {
   show_time();
   show_temperature();
   show_icon();
+  
 }
 
 static void deinit () {

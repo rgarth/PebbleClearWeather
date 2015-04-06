@@ -40,7 +40,7 @@ function getWeather(woeid) {
   var high;
   var low;
 
-  if (units == "us" || units == "f") {
+  if (units == "us" || units == "f" ) {
     units = "f";
   } else {
     units = "c";
@@ -73,6 +73,22 @@ function getWeather(woeid) {
     fIcon = parseInt(json.query.results.channel.item.forecast[tomorrow].code);
     dictionary["KEY_FORECAST_ICON"] = fIcon;
     console.log ("Forecast icon: " + fIcon);
+    
+    // Is it day or night?
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = today.getMonth()+1;
+    var dd = today.getDate();
+    var sunrise = new Date(yyyy + '/' + mm + '/' + dd + ' ' + json.query.results.channel.astronomy.sunrise);
+    var sunset = new Date(yyyy + '/' + mm + '/' + dd + ' ' + json.query.results.channel.astronomy.sunset);
+    if (today > sunrise && today < sunset) {
+      console.log ('Daytime');
+      dictionary["KEY_DAYLIGHT"] = 1;
+    } else {
+      console.log ('Nighttime');
+      dictionary["KEY_DAYLIGHT"] = 0;
+    }
+    console.log('Now: ' + today + ', Sunrise: ' + sunrise + ', Sunset:' + sunset);
     
     // Send to Pebble
     Pebble.sendAppMessage(dictionary,
