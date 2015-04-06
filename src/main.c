@@ -298,9 +298,9 @@ static void main_window_load(Window *window) {
   s_bitmap_layer = bitmap_layer_create(GRect(0, 84, 72, 84));
   bitmap_layer_set_alignment(s_bitmap_layer, GAlignCenter);
   bitmap_layer_set_background_color(s_bitmap_layer, GColorClear);
-  //bitmap_layer_set_compositing_mode(s_bitmap_layer, GCompOpSet);
-
+  
   #ifdef PBL_COLOR
+  bitmap_layer_set_compositing_mode(s_bitmap_layer, GCompOpSet);
   w_bitmap = gbitmap_create_blank(GSize(72, 72), GBitmapFormat8Bit);
   #else
   w_bitmap = gbitmap_create_blank(GSize(72, 72));
