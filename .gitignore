@@ -1,1 +1,5 @@
-resources/
+resources/images
+.DS_Store
+.DS_Store?
+.lock-waf_darwin_build
+build
