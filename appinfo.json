@@ -23,143 +23,138 @@
     "resources": {
         "media": [
             {
-                "file": "images/sm_cloudy_mostly_night.png",
-                "name": "SM_CLOUDY_MOSTLY_NIGHT",
+                "file": "images/grey.png",
+                "name": "IMG_GREY",
                 "type": "png"
             },
             {
-                "file": "images/sm_unknown.png",
-                "name": "SM_UNKNOWN",
+                "file": "fonts/DidactGothic.ttf",
+                "name": "DIDACTIC_GOTHIC_36",
+                "type": "font"
+            },
+            {
+                "file": "fonts/DidactGothic.ttf",
+                "name": "DIDACTIC_GOTHIC_48",
+                "type": "font"
+            },
+            {
+                "file": "images/tornado.png",
+                "name": "IMG_TORNADO",
                 "type": "png"
             },
             {
-                "file": "images/sm_wind_snow.png",
-                "name": "SM_WIND_SNOW",
+                "file": "images/thunderstorm.png",
+                "name": "IMG_THUNDERSTORM",
                 "type": "png"
             },
             {
-                "file": "images/sm_wind.png",
-                "name": "SM_WIND",
+                "file": "images/rain_freezing.png",
+                "name": "IMG_RAIN_FREEZING",
                 "type": "png"
             },
             {
-                "file": "images/sm_tornado.png",
-                "name": "SM_TORNADO",
+                "file": "images/snow_icy.png",
+                "name": "IMG_SNOW_ICY",
                 "type": "png"
             },
             {
-                "file": "images/sm_thunderstorm.png",
-                "name": "SM_THUNDERSTORM",
+                "file": "images/snow.png",
+                "name": "IMG_SNOW",
                 "type": "png"
             },
             {
-                "file": "images/sm_temperature_hot.png",
-                "name": "SM_TEMPERATURE_HOT",
+                "file": "images/wind_snow.png",
+                "name": "IMG_WINDOW_SNOW",
                 "type": "png"
             },
             {
-                "file": "images/sm_temperature_cold.png",
-                "name": "SM_TEMPERATURE_COLD",
+                "file": "images/hail_heavy.png",
+                "name": "IMG_HAIL_HEAVY",
                 "type": "png"
             },
             {
-                "file": "images/sm_sun.png",
-                "name": "SM_SUN",
+                "file": "images/haze.png",
+                "name": "IMG_HAZE",
                 "type": "png"
             },
             {
-                "file": "images/sm_snow_rain.png",
-                "name": "SM_SNOW_RAIN",
+                "file": "images/fog.png",
+                "name": "IMG_FOG",
                 "type": "png"
             },
             {
-                "file": "images/sm_snow.png",
-                "name": "SM_SNOW",
+                "file": "images/dust.png",
+                "name": "IMG_DUST",
                 "type": "png"
             },
             {
-                "file": "images/sm_snow_icy.png",
-                "name": "SM_SNOW_ICY",
+                "file": "images/smoke.png",
+                "name": "IMG_SMOKE",
                 "type": "png"
             },
             {
-                "file": "images/sm_smoke.png",
-                "name": "SM_SMOKE",
+                "file": "images/wind.png",
+                "name": "IMG_WIND",
                 "type": "png"
             },
             {
-                "file": "images/sm_rain.png",
-                "name": "SM_RAIN",
+                "file": "images/temperature_cold.png",
+                "name": "IMG_TEMPERATURE_COLD",
                 "type": "png"
             },
             {
-                "file": "images/sm_rain_freezing.png",
-                "name": "SM_RAIN_FREEZING",
+                "file": "images/cloudy_mostly.png",
+                "name": "IMG_CLOUDY",
                 "type": "png"
             },
             {
-                "file": "images/sm_moon.png",
-                "name": "SM_MOON",
+                "file": "images/cloudy_mostly_day.png",
+                "name": "IMG_CLOUDY_MOSTLY_DAY",
                 "type": "png"
             },
             {
-                "file": "images/sm_hurricane.png",
-                "name": "SM_HURRICANE",
+                "file": "images/cloudy_mostly_night.png",
+                "name": "IMG_CLOUDY_MOSTLY_NIGHT",
                 "type": "png"
             },
             {
-                "file": "images/sm_haze.png",
-                "name": "SM_HAZE",
+                "file": "images/cloudy_day.png",
+                "name": "IMG_CLOUDY_DAY",
                 "type": "png"
             },
             {
-                "file": "images/sm_hail.png",
-                "name": "SM_HAIL",
+                "file": "images/cloudy_night.png",
+                "name": "IMG_CLOUDY_NIGHT",
                 "type": "png"
             },
             {
-                "file": "images/sm_hail_heavy.png",
-                "name": "SM_HAIL_HEAVY",
+                "file": "images/moon.png",
+                "name": "IMG_MOON",
                 "type": "png"
             },
             {
-                "file": "images/sm_fog.png",
-                "name": "SM_FOG",
+                "file": "images/sun.png",
+                "name": "IMG_SUN",
                 "type": "png"
             },
             {
-                "file": "images/sm_dust.png",
-                "name": "SM_DUST",
+                "file": "images/hail.png",
+                "name": "IMG_HAIL",
                 "type": "png"
             },
             {
-                "file": "images/sm_cloudy_night.png",
-                "name": "SM_CLOUDY_NIGHT",
+                "file": "images/temperature_hot.png",
+                "name": "IMG_TEMPERATURE_HOT",
                 "type": "png"
             },
             {
-                "file": "images/sm_cloudy_mostly.png",
-                "name": "SM_CLOUDY",
+                "file": "images/unknown.png",
+                "name": "IMG_UNKNOWN",
                 "type": "png"
             },
             {
-                "file": "images/sm_cloudy_mostly_day.png",
-                "name": "SM_CLOUDY_MOSTLY_DAY",
-                "type": "png"
-            },
-            {
-                "file": "images/sm_cloudy_day.png",
-                "name": "SM_CLOUDY_DAY",
-                "type": "png"
-            },
-            {
-                "file": "images/snow_rain.png",
-                "name": "IMG_SNOW_RAIN",
-                "type": "png"
-            },
-            {
-                "file": "images/rain.png",
-                "name": "IMG_RAIN",
+                "file": "images/hurricane.png",
+                "name": "IMG_HURRICANE",
                 "type": "png"
             },
             {
@@ -169,134 +164,144 @@
                 "type": "png"
             },
             {
-                "file": "images/hurricane.png",
-                "name": "IMG_HURRICANE",
+                "file": "images/rain.png",
+                "name": "IMG_RAIN",
                 "type": "png"
             },
             {
-                "file": "images/unknown.png",
-                "name": "IMG_UNKNOWN",
+                "file": "images/snow_rain.png",
+                "name": "IMG_SNOW_RAIN",
                 "type": "png"
             },
             {
-                "file": "images/temperature_hot.png",
-                "name": "IMG_TEMPERATURE_HOT",
+                "file": "images/sm_cloudy_day.png",
+                "name": "SM_CLOUDY_DAY",
                 "type": "png"
             },
             {
-                "file": "images/hail.png",
-                "name": "IMG_HAIL",
+                "file": "images/sm_cloudy_mostly_day.png",
+                "name": "SM_CLOUDY_MOSTLY_DAY",
                 "type": "png"
             },
             {
-                "file": "images/sun.png",
-                "name": "IMG_SUN",
+                "file": "images/sm_cloudy_mostly.png",
+                "name": "SM_CLOUDY",
                 "type": "png"
             },
             {
-                "file": "images/moon.png",
-                "name": "IMG_MOON",
+                "file": "images/sm_cloudy_night.png",
+                "name": "SM_CLOUDY_NIGHT",
                 "type": "png"
             },
             {
-                "file": "images/cloudy_night.png",
-                "name": "IMG_CLOUDY_NIGHT",
+                "file": "images/sm_dust.png",
+                "name": "SM_DUST",
                 "type": "png"
             },
             {
-                "file": "images/cloudy_day.png",
-                "name": "IMG_CLOUDY_DAY",
+                "file": "images/sm_fog.png",
+                "name": "SM_FOG",
                 "type": "png"
             },
             {
-                "file": "images/cloudy_mostly_night.png",
-                "name": "IMG_CLOUDY_MOSTLY_NIGHT",
+                "file": "images/sm_hail_heavy.png",
+                "name": "SM_HAIL_HEAVY",
                 "type": "png"
             },
             {
-                "file": "images/cloudy_mostly_day.png",
-                "name": "IMG_CLOUDY_MOSTLY_DAY",
+                "file": "images/sm_hail.png",
+                "name": "SM_HAIL",
                 "type": "png"
             },
             {
-                "file": "images/cloudy_mostly.png",
-                "name": "IMG_CLOUDY",
+                "file": "images/sm_haze.png",
+                "name": "SM_HAZE",
                 "type": "png"
             },
             {
-                "file": "images/temperature_cold.png",
-                "name": "IMG_TEMPERATURE_COLD",
+                "file": "images/sm_hurricane.png",
+                "name": "SM_HURRICANE",
                 "type": "png"
             },
             {
-                "file": "images/wind.png",
-                "name": "IMG_WIND",
+                "file": "images/sm_moon.png",
+                "name": "SM_MOON",
                 "type": "png"
             },
             {
-                "file": "images/smoke.png",
-                "name": "IMG_SMOKE",
+                "file": "images/sm_rain_freezing.png",
+                "name": "SM_RAIN_FREEZING",
                 "type": "png"
             },
             {
-                "file": "images/dust.png",
-                "name": "IMG_DUST",
+                "file": "images/sm_rain.png",
+                "name": "SM_RAIN",
                 "type": "png"
             },
             {
-                "file": "images/fog.png",
-                "name": "IMG_FOG",
+                "file": "images/sm_smoke.png",
+                "name": "SM_SMOKE",
                 "type": "png"
             },
             {
-                "file": "images/haze.png",
-                "name": "IMG_HAZE",
+                "file": "images/sm_snow_icy.png",
+                "name": "SM_SNOW_ICY",
                 "type": "png"
             },
             {
-                "file": "images/hail_heavy.png",
-                "name": "IMG_HAIL_HEAVY",
+                "file": "images/sm_snow.png",
+                "name": "SM_SNOW",
                 "type": "png"
             },
             {
-                "file": "images/wind_snow.png",
-                "name": "IMG_WINDOW_SNOW",
+                "file": "images/sm_snow_rain.png",
+                "name": "SM_SNOW_RAIN",
                 "type": "png"
             },
             {
-                "file": "images/snow.png",
-                "name": "IMG_SNOW",
+                "file": "images/sm_sun.png",
+                "name": "SM_SUN",
                 "type": "png"
             },
             {
-                "file": "images/snow_icy.png",
-                "name": "IMG_SNOW_ICY",
+                "file": "images/sm_temperature_cold.png",
+                "name": "SM_TEMPERATURE_COLD",
                 "type": "png"
             },
             {
-                "file": "images/rain_freezing.png",
-                "name": "IMG_RAIN_FREEZING",
+                "file": "images/sm_temperature_hot.png",
+                "name": "SM_TEMPERATURE_HOT",
                 "type": "png"
             },
             {
-                "file": "images/thunderstorm.png",
-                "name": "IMG_THUNDERSTORM",
+                "file": "images/sm_thunderstorm.png",
+                "name": "SM_THUNDERSTORM",
                 "type": "png"
             },
             {
-                "file": "images/tornado.png",
-                "name": "IMG_TORNADO",
+                "file": "images/sm_tornado.png",
+                "name": "SM_TORNADO",
                 "type": "png"
             },
             {
-                "file": "fonts/DidactGothic.ttf",
-                "name": "DIDACTIC_GOTHIC_48",
-                "type": "font"
+                "file": "images/sm_wind.png",
+                "name": "SM_WIND",
+                "type": "png"
             },
             {
-                "file": "fonts/DidactGothic.ttf",
-                "name": "DIDACTIC_GOTHIC_36",
-                "type": "font"
+                "file": "images/sm_wind_snow.png",
+                "name": "SM_WIND_SNOW",
+                "type": "png"
+            },
+            {
+                "file": "images/sm_unknown.png",
+                "name": "SM_UNKNOWN",
+                "type": "png"
+            },
+            {
+                "file": "images/sm_cloudy_mostly_night.png",
+                "name": "SM_CLOUDY_MOSTLY_NIGHT",
+                "type": "png"
             }
         ]
     },

@@ -29,6 +29,13 @@ static TextLayer *s_forecast_header_layer, *s_forecast_high_layer, *s_forecast_l
 static BitmapLayer *s_forecast_bitmap_layer;
 static InverterLayer *s_forecast_invert_layer;
 static Layer *s_forecast_bg_layer;
+
+#ifdef PBL_COLOR
+#else
+static BitmapLayer *s_forecast_grey_layer;
+GBitmap *g_bitmap;
+#endif
+
 // variables
 char w_units[] = "us";
 int w_current, f_high, f_low;
@@ -271,7 +278,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), w_bg_layer);
   
   // Create time TextLayer
-  s_time_layer = text_layer_create(GRect(0, 12, 144, 50));
+  s_time_layer = text_layer_create(GRect(0, 12, 144, 52));
   text_layer_set_background_color(s_time_layer, GColorBlack);
   text_layer_set_text_color(s_time_layer, GColorWhite);
   time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_48)); 
@@ -279,7 +286,7 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
        
   // temperature layer
-  s_temperature_layer = text_layer_create(GRect(72, 104, 72, 40));
+  s_temperature_layer = text_layer_create(GRect(72, 104, 72, 44));
   text_layer_set_background_color(s_temperature_layer, GColorClear);
   text_layer_set_text_color(s_temperature_layer, GColorWhite); 
   text_layer_set_overflow_mode(s_temperature_layer, GTextOverflowModeWordWrap);
@@ -365,14 +372,24 @@ static void forecast_window_load(Window *window) {
   s_forecast_invert_layer = inverter_layer_create(GRect(0, 84, 144, 84));
   layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(s_forecast_invert_layer));
 
-  // grey background
+  // color background
   s_forecast_bg_layer = layer_create(GRect(72, 84, 144, 84));
   layer_set_update_proc(s_forecast_bg_layer, w_update_bg_color); 
   layer_add_child(window_get_root_layer(window), s_forecast_bg_layer);
 
+  #ifdef PBL_COLOR
+  #else
+  // grey background
+  s_forecast_grey_layer = bitmap_layer_create(GRect(72, 84, 72, 84));
+  bitmap_layer_set_alignment(s_forecast_grey_layer, GAlignCenter);
+  g_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_GREY);
+  bitmap_layer_set_bitmap(s_forecast_grey_layer, g_bitmap);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_grey_layer));
+  #endif
+
   // high and low
   hilo_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_DIDACTIC_GOTHIC_36));
-  s_forecast_high_layer = text_layer_create(GRect(0, 102, 72, 40));
+  s_forecast_high_layer = text_layer_create(GRect(0, 102, 72, 42));
   text_layer_set_background_color(s_forecast_high_layer, GColorClear);
   text_layer_set_text_color(s_forecast_high_layer, GColorBlack);
   text_layer_set_overflow_mode(s_forecast_high_layer, GTextOverflowModeWordWrap);
@@ -384,9 +401,13 @@ static void forecast_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_high_layer));
 
 
-  s_forecast_low_layer = text_layer_create(GRect(72, 102, 72, 40));
+  s_forecast_low_layer = text_layer_create(GRect(72, 102, 72, 42));
   text_layer_set_background_color(s_forecast_low_layer, GColorClear);
-  text_layer_set_text_color(s_forecast_low_layer, GColorWhite);
+  #ifdef PBL_COLOR
+    text_layer_set_text_color(s_forecast_low_layer, GColorWhite);
+  #else
+    text_layer_set_text_color(s_forecast_low_layer, GColorBlack);
+  #endif
   text_layer_set_overflow_mode(s_forecast_low_layer, GTextOverflowModeWordWrap);
   text_layer_set_font(s_forecast_low_layer, hilo_font);
   text_layer_set_text_alignment(s_forecast_low_layer, GTextAlignmentCenter);
@@ -407,6 +428,11 @@ static void forecast_window_unload(Window *window) {
   fonts_unload_custom_font(hilo_font);
   text_layer_destroy(s_forecast_high_layer);
   text_layer_destroy(s_forecast_low_layer);
+  #ifdef PBL_COLOR
+  #else
+    gbitmap_destroy(g_bitmap);
+    bitmap_layer_destroy(s_forecast_grey_layer);
+  #endif
 }
 
 static void init () {
