@@ -3,14 +3,13 @@
 // It was just simply to declare a global
 var units = "us";
 var tomorrow = 0;
-var dictionary = new Object;
 
 
 function locationSuccess(pos) {
   // We neeed to get the Yahoo woeid first
   var woeid;
   var city;
-
+  
   var query = 'select * from geo.placefinder where text="' +
     pos.coords.latitude + ',' + pos.coords.longitude + '" and gflags="R"';
   console.log(query);
@@ -21,24 +20,24 @@ function locationSuccess(pos) {
   xhr.onload = function () {
     var json = JSON.parse(this.responseText);
     city = json.query.results.Result.city;
-    dictionary["KEY_CITY"] = city;
     console.log (city);
     woeid = json.query.results.Result.woeid;
     console.log (woeid);
-    getWeather(woeid);
+    getWeather(woeid, city);
   };
   xhr.open('GET', url);
   xhr.send();
 
 }
 
-function getWeather(woeid) {  
+function getWeather(woeid, city) {  
   
   var temperature;
   var icon;
   var fIcon;
   var high;
   var low;
+  var daylight;
 
   if (units == "us" || units == "f" ) {
     units = "f";
@@ -55,23 +54,18 @@ function getWeather(woeid) {
   xhr.onload = function () {
     var json = JSON.parse(this.responseText);
     temperature = parseInt(json.query.results.channel.item.condition.temp);
-    dictionary["KEY_TEMPERATURE"] = temperature;
     console.log ("Temperature is " + temperature);
     
     icon = parseInt(json.query.results.channel.item.condition.code);
-    dictionary["KEY_ICON"] = icon;
     console.log ("Icon: " + icon);
     
     high = parseInt(json.query.results.channel.item.forecast[tomorrow].high);
-    dictionary["KEY_HIGH"] = high;
     console.log ("High: " + high);
     
     low = parseInt(json.query.results.channel.item.forecast[tomorrow].low);
-    dictionary["KEY_LOW"] = low;
     console.log ("Low: " + low);
     
     fIcon = parseInt(json.query.results.channel.item.forecast[tomorrow].code);
-    dictionary["KEY_FORECAST_ICON"] = fIcon;
     console.log ("Forecast icon: " + fIcon);
     
     // Is it day or night?
@@ -83,12 +77,23 @@ function getWeather(woeid) {
     var sunset = new Date(yyyy + '/' + mm + '/' + dd + ' ' + json.query.results.channel.astronomy.sunset);
     if (today > sunrise && today < sunset) {
       console.log ('Daytime');
-      dictionary["KEY_DAYLIGHT"] = 1;
+      daylight = 1;
     } else {
       console.log ('Nighttime');
-      dictionary["KEY_DAYLIGHT"] = 0;
+      daylight = 0;
     }
     console.log('Now: ' + today + ', Sunrise: ' + sunrise + ', Sunset:' + sunset);
+    
+    var dictionary = {
+      'KEY_CITY': city,
+      'KEY_ICON': icon,
+      'KEY_HIGH': high,
+      'KEY_LOW': low,
+      'KEY_FORECAST_ICON': fIcon,
+      'KEY_TEMPERATURE': temperature,
+      'KEY_DAYLIGHT': daylight,
+      'KEY_TOMORROW': tomorrow
+    };
     
     // Send to Pebble
     Pebble.sendAppMessage(dictionary,
@@ -157,7 +162,6 @@ Pebble.addEventListener('appmessage',
       tomorrow = 0;
       console.log ("Today's Forecast!");
     }
-    dictionary["KEY_TOMORROW"] = tomorrow;
     getLocation();
   }                     
 );
