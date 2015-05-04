@@ -27,8 +27,8 @@ static Layer *w_bg_layer;
 static Window *s_forecast_window;
 static TextLayer *s_forecast_header_layer, *s_forecast_high_layer, *s_forecast_low_layer;
 static BitmapLayer *s_forecast_bitmap_layer;
-static InverterLayer *s_forecast_invert_layer;
-static Layer *s_forecast_bg_layer;
+static Layer *s_high_bg_layer;
+static Layer *s_low_bg_layer;
 
 #ifdef PBL_COLOR
 #else
@@ -78,6 +78,13 @@ static void w_update_bg_color(Layer *layer, GContext *ctx) {
   #endif
 }
  
+static void w_update_bg_white(Layer *layer, GContext *ctx) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Updating background");
+  GRect bounds = layer_get_bounds(layer);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+}
+
 static void show_icon() {
   if (w_icon >= 0) {
     gbitmap_destroy(w_bitmap);
@@ -310,7 +317,7 @@ static void main_window_load(Window *window) {
   bitmap_layer_set_compositing_mode(s_bitmap_layer, GCompOpSet);
   w_bitmap = gbitmap_create_blank(GSize(72, 72), GBitmapFormat8Bit);
   #else
-  w_bitmap = gbitmap_create_blank(GSize(72, 72));
+  w_bitmap = gbitmap_create_blank(GSize(72, 72), GBitmapFormat1Bit);
   #endif
 
   bitmap_layer_set_bitmap(s_bitmap_layer, w_bitmap);
@@ -369,16 +376,16 @@ static void forecast_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_header_layer));  
 
   // flip the bottom half of the window to white
-  s_forecast_invert_layer = inverter_layer_create(GRect(0, 84, 144, 84));
-  layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(s_forecast_invert_layer));
-
+  s_high_bg_layer = layer_create(GRect(0, 84, 72, 84));
+  layer_set_update_proc(s_high_bg_layer, w_update_bg_white);
+  layer_add_child(window_get_root_layer(window), s_high_bg_layer);
+ 
   // color background
-  s_forecast_bg_layer = layer_create(GRect(72, 84, 144, 84));
-  layer_set_update_proc(s_forecast_bg_layer, w_update_bg_color); 
-  layer_add_child(window_get_root_layer(window), s_forecast_bg_layer);
+  s_low_bg_layer = layer_create(GRect(72, 84, 72, 84));
+  layer_set_update_proc(s_low_bg_layer, w_update_bg_color); 
+  layer_add_child(window_get_root_layer(window), s_low_bg_layer);
 
-  #ifdef PBL_COLOR
-  #else
+  #ifdef PBL_BW
   // grey background
   s_forecast_grey_layer = bitmap_layer_create(GRect(72, 84, 72, 84));
   bitmap_layer_set_alignment(s_forecast_grey_layer, GAlignCenter);
@@ -423,8 +430,8 @@ static void forecast_window_unload(Window *window) {
   gbitmap_destroy(f_bitmap);
   bitmap_layer_destroy(s_forecast_bitmap_layer);
   text_layer_destroy(s_forecast_header_layer);
-  inverter_layer_destroy(s_forecast_invert_layer);
-  layer_destroy(s_forecast_bg_layer);
+  layer_destroy(s_high_bg_layer);
+  layer_destroy(s_low_bg_layer);
   fonts_unload_custom_font(hilo_font);
   text_layer_destroy(s_forecast_high_layer);
   text_layer_destroy(s_forecast_low_layer);
