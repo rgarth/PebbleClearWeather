@@ -33,6 +33,13 @@
           <option value="18">After 6pm</option>
           <option value="24">Never</option>
         </select>
+        <br />
+        <label for="update-interval" class="select">Update the weather:</label>
+        <select name="update-interval" id="update-interval">
+          <option value="60">Hourly</option>
+          <option value="30">Half-hourly</option>
+          <option value="15">Every 15 minutes</option>
+        </select>
         </div>
 
           <fieldset class="ui-grid-a">
@@ -50,6 +57,7 @@
         var options = {}
         options["units"] = $('input:radio[name=units]:checked').val();
         options["time"] = $('#time-choice option:selected').val();
+        options["update"] = $('#update-interval option:selected').val();
         return options;
       }
 
@@ -85,6 +93,7 @@
           $('input#units-si').prop("checked", "true").checkboxradio("refresh");
         }
         $('select#time-choice').val(getUrlParameter('time')).prop("selected", "true").selectmenu("refresh");
+        $('select#update-interval').val(getUrlParameter('update')).prop("selected", "true").selectmenu("refresh");
 
 
       });
