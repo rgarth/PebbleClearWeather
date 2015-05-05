@@ -11,7 +11,8 @@
         "KEY_TEMPERATURE": 3,
         "KEY_TIMESWITCH": 2,
         "KEY_TOMORROW": 9,
-        "KEY_UNITS": 1
+        "KEY_UNITS": 1,
+        "KEY_UPDATE_INTERVAL": 12
     },
     "capabilities": [
         "location",
@@ -313,7 +314,7 @@
     ],
     "uuid": "3368d3ce-8352-4234-ab12-51e57dd1e0bd",
     "versionCode": 1,
-    "versionLabel": "2.3",
+    "versionLabel": "2.4",
     "watchapp": {
         "watchface": true
     }

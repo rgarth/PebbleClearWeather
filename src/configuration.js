@@ -1,11 +1,15 @@
 Pebble.addEventListener('showConfiguration', function(e) {
   // Show config page
   var units = localStorage.getItem('units');
-  if (typeof units == 'undefined') units = "us";
+  if (! units) units = "us";
   var timeChoice = localStorage.getItem('time');
-  if (typeof timeChoice == 'undefined') timeChoice = "12";
-  var URL = 'http://rgarth.github.io/PebbleClearWeather/configuration.html?units=' + 
-      units + '&time=' + timeChoice;
+  if (! timeChoice) timeChoice = "12";
+  var updateInterval = localStorage.getItem('update');
+  if (! updateInterval) updateInterval = 30;
+  var URL = 'http://rgarth.github.io/PebbleClearWeather/configuration.html?' + 
+      'units=' + units + 
+      '&time=' + timeChoice + 
+      '&update=' + updateInterval;
   console.log('Configuration window opened. ' + URL);
   Pebble.openURL(URL);
 });
@@ -13,12 +17,16 @@ Pebble.addEventListener('showConfiguration', function(e) {
 Pebble.addEventListener('webviewclosed',
   function(e) {
     var configuration = JSON.parse(decodeURIComponent(e.response));
+    var updateInterval = parseInt(configuration.update) || 30;
+    var timeChoice = parseInt(configuration.time) || 12;
     var dictionary = {
       "KEY_UNITS": configuration.units,
-      "KEY_TIMESWITCH": parseInt(configuration.time)
+      "KEY_TIMESWITCH": timeChoice,
+      "KEY_UPDATE_INTERVAL": updateInterval,
     };
     localStorage.setItem('units', configuration.units);
-    localStorage.setItem('time', configuration.time);
+    localStorage.setItem('time', timeChoice);
+    localStorage.setItem('update', updateInterval);
     // Send to Pebble
     Pebble.sendAppMessage(dictionary,
       function(e) {

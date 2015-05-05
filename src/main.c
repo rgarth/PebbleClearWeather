@@ -13,6 +13,7 @@
 #define KEY_TOMORROW      9
 #define KEY_LAST         10
 #define KEY_DAYLIGHT     11
+#define KEY_UPDATE_INTERVAL 12
   
 #define MyTupletCString(_key, _cstring) \
 ((const Tuplet) { .type = TUPLE_CSTRING, .key = _key, .cstring = { .data = _cstring, .length = strlen(_cstring) + 1 }})
@@ -49,6 +50,7 @@ bool tomorrow = 0;
 AppTimer *shake_timer;
 int last_update;
 bool daylight = 1;
+int update_interval = 30;
 
 
 static void show_temperature() {
@@ -182,7 +184,8 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   }
   
   // Get weather update every 30 minutes
-  if(tick_time->tm_min % 30 == 0){
+  if (tick_time->tm_min % update_interval == 0) {
+    APP_LOG(APP_LOG_LEVEL_INFO, "Updating Weather!");
     update_weather();
   }
 
@@ -243,6 +246,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       break;
     case KEY_CITY:
       snprintf(f_city, sizeof(f_city), "%s", t->value->cstring);
+      break;
+    case KEY_UPDATE_INTERVAL:
+      update_interval = t->value->int32;
+      persist_write_int(KEY_UPDATE_INTERVAL, update_interval);
       break;
     case KEY_JSREADY:
       // JS ready lets get the weather
@@ -426,7 +433,7 @@ static void forecast_window_load(Window *window) {
 }
 
 static void forecast_window_unload(Window *window) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "Unoaded forecast window");
+  APP_LOG(APP_LOG_LEVEL_INFO, "Unloaded forecast window");
   gbitmap_destroy(f_bitmap);
   bitmap_layer_destroy(s_forecast_bitmap_layer);
   text_layer_destroy(s_forecast_header_layer);
@@ -451,6 +458,10 @@ static void init () {
   if (persist_exists(KEY_TIMESWITCH)) {
     time_switch = persist_read_int(KEY_TIMESWITCH);
     APP_LOG(APP_LOG_LEVEL_INFO, "Reading time switch value: %i", time_switch);
+  }
+  if (persist_exists(KEY_UPDATE_INTERVAL)) {
+    update_interval = persist_read_int(KEY_UPDATE_INTERVAL);
+    APP_LOG(APP_LOG_LEVEL_INFO, "Reading weather update inteval: %i", update_interval);
   }
   if (persist_exists(KEY_LAST)) {
     last_update = persist_read_int(KEY_LAST);
